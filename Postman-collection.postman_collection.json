@@ -1,0 +1,981 @@
+{
+	"info": {
+		"_postman_id": "3f0c2f75-8fc8-4f63-95cc-a1910721daec",
+		"name": "Postman-collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27611678"
+	},
+	"item": [
+		{
+			"name": "API status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response time is within an acceptable range\", ()=> {",
+							"  pm.expect(pm.response.responseTime).to.be.below(5000);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.status).to.exist;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Status field is a non-empty string\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.status).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+							"});",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/status",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List of books",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', () => {",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"const response = pm.response.json();",
+							"",
+							"pm.test('Response time is less than 2000ms', () => {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"})",
+							"",
+							"pm.test('Response has the required fields - id, name, type, and available', () => {",
+							"    pm.expect(pm.response.json()).to.be.an('array');",
+							"    pm.expect(pm.response.json()).to.not.be.empty;",
+							"    pm.response.json().forEach(function (book) {",
+							"        pm.expect(book).to.have.property('id');",
+							"        pm.expect(book).to.have.property('name');",
+							"        pm.expect(book).to.have.property('type');",
+							"        pm.expect(book).to.have.property('available');",
+							"    });",
+							"})",
+							"",
+							"pm.test(\"Available  is a non-empty boolean\", ()=>{",
+							"    pm.response.json().forEach(function(book) {",
+							"        pm.expect(book.available).to.be.a('boolean').and.to.not.be.null;",
+							"    });",
+							"});",
+							"",
+							"pm.test('BookId is a non-negative integer', () => {",
+							"    ",
+							"    pm.response.json().forEach(function (book) {",
+							"        pm.expect(book.id).to.be.a('number').and.to.satisfy(id => id >= 0, 'BookId must be a non-negative integer');",
+							"    });",
+							"})",
+							"",
+							"pm.test('NameOfBook is a non-empty string', () => {",
+							"   ",
+							"    pm.expect(pm.response.json()).to.be.an('array');",
+							"    pm.response.json().forEach(function (book) {",
+							"        pm.expect(book.name).to.be.a('string').and.to.have.lengthOf.at.least(1, 'NameOfBook should not be empty');",
+							"    });",
+							"})",
+							"",
+							"pm.test('TypeOfBook is a non-empty string', () => {",
+							"",
+							"    pm.expect(pm.response.json()).to.be.an('array');",
+							"    pm.response.json().forEach(function (book) {",
+							"        pm.expect(book.type).to.be.a('string').and.to.have.lengthOf.at.least(1, 'TypeOfBook should not be empty');",
+							"    });",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/books?type=non-fiction&limit=3",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"books"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "non-fiction"
+						},
+						{
+							"key": "limit",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "A single book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"A book is returned and has required fields\",() => {",
+							"",
+							"    const singleBookResponse = pm.response.json();",
+							"    pm.expect(singleBookResponse).to.have.an('object')",
+							"    pm.expect(singleBookResponse).to.not.be.empty;",
+							"    pm.expect(singleBookResponse).to.have.property('id');",
+							"    pm.expect(singleBookResponse).to.have.property('name');",
+							"    pm.expect(singleBookResponse).to.have.property('author');",
+							"    pm.expect(singleBookResponse).to.have.property('type');",
+							"    pm.expect(singleBookResponse).to.have.property('price');",
+							"    pm.expect(singleBookResponse).to.have.property('current-stock');",
+							"    pm.expect(singleBookResponse).to.have.property('available')",
+							"});",
+							"    ",
+							"    pm.test('BookId is a non-negative integer', () => {",
+							"",
+							"        const singleBookResponse = pm.response.json();",
+							"        pm.expect(singleBookResponse.id).to.be.a('number').and.to.satisfy(id => id >= 0, 'BookId must be a non-negative integer');",
+							"    });",
+							"",
+							"  ",
+							"pm.test(\"Price and current-stock are non-negative numbers\", ()=> {",
+							"    const singleBookResponse = pm.response.json();",
+							"    ",
+							"    pm.expect(singleBookResponse).to.be.an('object');",
+							"    pm.expect(singleBookResponse.price).to.be.a('number').and.to.satisfy((value) => value >= 0, \"Price should be non-negative\");",
+							"    pm.expect(singleBookResponse[\"current-stock\"]).to.be.a('number').and.to.satisfy((value) => value >= 0, \"Price should be non-negative\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Name and author are non-empty strings\", () =>  {",
+							"    const singleBookResponse = pm.response.json();",
+							"    ",
+							"    pm.expect(singleBookResponse).to.be.an('object');",
+							"    pm.expect(singleBookResponse.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Name should not be empty\");",
+							"    pm.expect(singleBookResponse.author).to.be.a('string').and.to.have.lengthOf.at.least(1, \"author should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Available field is a boolean value,true or false\", () =>  {",
+							"  const singleBookResponse= pm.response.json();",
+							"  pm.expect(singleBookResponse).to.be.an('object');",
+							"  pm.expect(singleBookResponse.available).to.be.oneOf([true, false]);",
+							"});",
+							"",
+							"",
+							"",
+							"pm.test(\"Type of the book should be defined and not null\", () =>  {",
+							"    const singleBookResponse = pm.response.json();",
+							"    ",
+							"    pm.expect(singleBookResponse).to.be.an('object');",
+							"    pm.expect(singleBookResponse).to.exist.and.to.not.be.null;",
+							"});",
+							"",
+							"",
+							"",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/books/:bookId",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"books",
+						":bookId"
+					],
+					"variable": [
+						{
+							"key": "bookId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Authentication ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", ()=> {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"",
+							" access = res.accessToken",
+							"",
+							" ",
+							"pm.collectionVariables.set(\"accessToken\",access);",
+							"",
+							"",
+							"",
+							"",
+							"pm.test(\"Access token is not empty\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.accessToken).to.exist.and.to.not.be.empty;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Access token is in a valid format\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.accessToken).to.be.a('string').and.to.match(/^[A-Za-z0-9-_]+$/);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify access token is successfully stored in collection variables\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.accessToken).to.exist;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", ()=> {",
+							"  pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify the access token length is within an expected range\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.accessToken).to.exist.and.to.have.length.within(5, 70);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Access token is unique for each response\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  const accessToken = responseData.accessToken;",
+							"",
+							"  pm.expect(accessToken).to.be.a('string');",
+							"  pm.expect(accessToken).to.have.lengthOf.at.least(1, \"Access token should not be empty\");",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"clientName\": \"{{$randomFullName}}\",\n   \"clientEmail\": \"{{$randomEmail}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api-clients",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api-clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", ()=> {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"const res = pm. response.json();",
+							"",
+							"order = res.orderId;",
+							"",
+							"pm.collectionVariables.set(\"orderId\", order);",
+							"",
+							"",
+							"",
+							"pm.test(\"Created field is set to true\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.created).to.be.true;",
+							"});",
+							"",
+							"",
+							"pm.test(\"OrderId should not be empty\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.orderId).to.exist.and.to.not.be.empty;",
+							"});",
+							"",
+							"",
+							"pm.test(\"OrderId is stored in the collection variable 'orderId'\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.orderId).to.exist;",
+							"    pm.collectionVariables.set(\"orderId\", responseData.orderId);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is set to application/json\", ()=> {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that the 'created' field is a boolean\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.created).to.be.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that orderId field is a string\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.orderId).to.be.a('string');",
+							"});",
+							"",
+							"",
+							"pm.test(\"OrderId field is a non-empty string\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.orderId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"OrderId should be a non-empty string\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Created field is present in the response\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.have.property('created');",
+							"});",
+							"",
+							"",
+							"pm.test(\"OrderId field is present in the response\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.have.property('orderId');",
+							"});",
+							"",
+							"",
+							"pm.test(\"OrderId field is a truthy value\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.orderId).to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", ()=> {",
+							"  pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Order ID has a valid format\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.orderId).to.match(/^[a-zA-Z0-9_-]+$/, \"Order ID should be alphanumeric with dashes or underscores\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields - created and orderId\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData).to.have.property('created');",
+							"  pm.expect(responseData).to.have.property('orderId');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Order ID should not be null or undefined\",()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.orderId).to.not.be.null.and.to.not.be.undefined;",
+							"});",
+							"",
+							"",
+							"pm.test(\"OrderId is a unique identifier\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.orderId).to.exist;",
+							"    pm.expect(responseData.orderId).to.not.oneOf(['12345', 'abcd'], \"OrderId should not be a common default value\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}  ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\n{\n  \"bookId\": 5,\n  \"customerName\": \"{{$randomFullName}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/orders",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"ID is a non-empty string\", ()=> {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  responseData.forEach(function(order) {",
+							"    pm.expect(order.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"ID should be a non-empty string\");",
+							"  });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Quantity is a non-negative integer\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    responseData.forEach(function(order) {",
+							"        pm.expect(order.quantity).to.be.a('number').and.to.be.at.least(0);",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Response Content-Type is application/json\", ()=> {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"BookId is a non-negative integer\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    responseData.forEach(function(order) {",
+							"        pm.expect(order.bookId).to.be.a('number');",
+							"        pm.expect(order.bookId).to.be.at.least(0);",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"CustomerName is a non-empty string\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    responseData.forEach(function(order) {",
+							"        pm.expect(order.customerName).to.be.a('string').and.to.have.lengthOf.at.least(1, \"CustomerName should not be empty\");",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Created by should be a non-empty string\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array').that.is.not.empty;",
+							"    responseData.forEach(function(order) {",
+							"        pm.expect(order.createdBy).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Each order has a unique ID\", ()=> {",
+							"    const orders = pm.response.json();",
+							"    ",
+							"    pm.expect(orders).to.be.an('array');",
+							"    orders.forEach(order => {",
+							"        pm.expect(order.id).to.exist;",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Timestamp is in the past\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    responseData.forEach(function(order) {",
+							"        pm.expect(order.timestamp).to.be.at.most(new Date().getTime(), \"Timestamp should be in the past\");",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Quantity of each order is within an acceptable range\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    ",
+							"    responseData.forEach(function(order) {",
+							"        pm.expect(order.quantity).to.be.a('number');",
+							"        pm.expect(order.quantity).to.be.at.least(0);",
+							"        pm.expect(order.quantity).to.be.at.most(100);",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response contains at least one order\", ()=> {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array').that.is.not.empty;",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}  ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/orders",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific Orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields - id, bookId, customerName, createdBy, quantity, and timestamp\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.include.all.keys('id', 'bookId', 'customerName', 'createdBy', 'quantity', 'timestamp');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Id is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Id should be a non-empty string\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Quantity is a non-negative integer\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.quantity).to.be.a('number');",
+							"  pm.expect(responseData.quantity).to.be.at.least(0, \"Quantity should be a non-negative integer\");",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}  ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/orders/:ordersId=",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"orders",
+						":ordersId="
+					],
+					"variable": [
+						{
+							"key": "ordersId=",
+							"value": "{{orderId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 204', function () {",
+							"    pm.response.to.have.status(204);",
+							"})",
+							"",
+							"pm.test('Response body is null', function () {",
+							"    pm.expect(pm.response.text()).to.be.empty;",
+							"})",
+							"",
+							"",
+							"pm.test('Response does not contain any sensitive information', function () {",
+							"    pm.expect(pm.response.text()).to.be.empty;",
+							"})",
+							"",
+							"pm.test('Response time is less than 2000ms', function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"})",
+							"",
+							"pm.test(\"Response body is empty\", function () {",
+							"    pm.expect(pm.response.text()).to.be.empty;",
+							"});",
+							"",
+							"",
+							"pm.test(\"No specific error message in the response\", function () {",
+							"    const responseData = xml2Json(pm.response.text());",
+							"    ",
+							"    pm.expect(responseData).to.be.null;",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}  ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"customerName\": \"SandJohn\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/orders/:ordersId=",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"orders",
+						":ordersId="
+					],
+					"variable": [
+						{
+							"key": "ordersId=",
+							"value": "{{orderId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete an order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response body is empty or null\", function () {",
+							"    const responseData = xml2Json(pm.response.text());",
+							"",
+							"    pm.expect(responseData).to.be.null;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that the order with the specified orderId is deleted from the system\", function () {",
+							"   ",
+							"});",
+							"",
+							"",
+							"pm.test(\"Ensure response does not contain sensitive information\", function () {",
+							"    const responseData = xml2Json(pm.response.text());",
+							"",
+							"    pm.expect(responseData).to.be.null;",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}  ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/orders/:ordersId=",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"orders",
+						":ordersId="
+					],
+					"variable": [
+						{
+							"key": "ordersId=",
+							"value": "{{orderId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "accessToken",
+			"value": "ceba5984b2259674b2946617217a22482fa8963aa069263e0321c9516c99b024",
+			"type": "string"
+		},
+		{
+			"key": "orderId",
+			"value": "hTetO8evY97FpLyeABauh"
+		},
+		{
+			"key": "baseURL",
+			"value": "https://simple-books-api.glitch.me",
+			"type": "string"
+		}
+	]
+}
